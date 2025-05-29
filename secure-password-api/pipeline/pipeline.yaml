@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+      - main  # Change if your deployment branch is different
+
+pool:
+  vmImage: 'ubuntu-latest'  # Microsoft-hosted Ubuntu agent
+
+variables:
+  KUBE_NAMESPACE: default              # Kubernetes namespace to deploy into
+  RELEASE_NAME: secure-password-api    # Helm release name
+  CHART_PATH: ./helm-chart              # Path to your Helm chart in repo
+  IMAGE_REPOSITORY: pselmani/personal  # Your Docker Hub repo
+  IMAGE_TAG: latest                    # Tag of your image (can use build variables)
+
+steps:
+- task: HelmInstaller@1
+  displayName: 'Install Helm CLI'
+  inputs:
+    helmVersionToInstall: 'latest'
+
+- task: AzureCLI@2
+  displayName: 'Login to Azure and get AKS credentials'
+  inputs:
+    azureSubscription: '<YOUR_AZURE_SERVICE_CONNECTION>'  # Replace with your service connection name
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      az aks get-credentials --resource-group <YOUR_RESOURCE_GROUP> --name <YOUR_AKS_CLUSTER_NAME> --overwrite-existing
+
+- script: |
+    helm upgrade --install $(RELEASE_NAME) $(CHART_PATH) \
+      --namespace $(KUBE_NAMESPACE) \
+      --set image.repository=$(IMAGE_REPOSITORY) \
+      --set image.tag=$(IMAGE_TAG) \
+      --wait
+  displayName: 'Deploy Helm chart to AKS'
