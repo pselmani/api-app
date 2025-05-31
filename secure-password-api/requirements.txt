@@ -1,2 +1,5 @@
 fastapi
 uvicorn
+httpx
+slowapi
+prometheus-fastapi-instrumentator

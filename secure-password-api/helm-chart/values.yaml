@@ -32,8 +32,21 @@ livenessProbe:
   initialDelaySeconds: 15
   periodSeconds: 20
 
+prometheus:
+  enabled: true
+  path: /metrics
+
 hpa:
   enabled: true
   minReplicas: 1
   maxReplicas: 3
   targetCPUUtilizationPercentage: 50
+
+env:
+  - name: SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: my-secret
+        key: secret_key
+  - name: ANOTHER_VAR
+    value: "some-value"

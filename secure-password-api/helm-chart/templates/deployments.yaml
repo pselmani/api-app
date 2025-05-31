@@ -1,16 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "secure-password-api.fullname" . }}
+  annotations:
+{{- if .Values.prometheus.enabled }}
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "{{ .Values.prometheus.path }}"
+    prometheus.io/port: "8000"
+{{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ include "secure-password-api.fullname" . }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ include "secure-password-api.fullname" . }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -18,6 +24,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8000
+          env:
+{{- with .Values.env }}
+{{ toYaml . | indent 12 }}
+{{- end }}
           livenessProbe:
             httpGet:
               path: {{ .Values.livenessProbe.path }}
