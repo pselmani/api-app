@@ -1,1 +1,0 @@
-"The app listens on port 8000 internally. The Helm chart configures the container and Kubernetes Service to expose port 8000. You can either port-forward or add an Ingress or change the Service type to LoadBalancer depending on your cluster."

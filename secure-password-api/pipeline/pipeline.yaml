@@ -9,7 +9,7 @@ pool:
 variables:
   KUBE_NAMESPACE: default              # Kubernetes namespace to deploy into
   RELEASE_NAME: secure-password-api    # Helm release name
-  CHART_PATH: ./helm-chart              # Path to your Helm chart in repo
+  CHART_PATH: ./helm-chart             # Path to your Helm chart in repo
   IMAGE_REPOSITORY: pselmani/personal  # Your Docker Hub repo
   IMAGE_TAG: latest                    # Tag of your image (can use build variables)
 
